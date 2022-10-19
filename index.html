@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>canvas to html</title>
+	<style type="text/css">
+		.rect{width:60px; height:60px; }
+		.red{background: red}
+		.green{background: green}
+		.blue{background: blue}
+		#monitor{padding: 10px; border: 1px solid black;margin: auto;}
+		#container{position: absolute;
+				left: calc(50% - 400px);
+				top: 0px;
+				width: 800px; height: 800px;
+				border: 1px solid red;}
+		#screenshot{display: block;padding: 10px;margin: 810px auto 10px;}
+	</style>
+</head>
+<body>
+<div id="container">
+	<div class="red rect drag" style="left:200px"></div>
+	<div class="green rect drag" style="left:300px"></div>
+	<div class="blue rect drag" style="left:400px"></div>
+	<img src="badge.jpg" class="drag" style="width:300px;left:450px; top:300px">
+	<img src="bloom.png" class="drag" style="width:200px;left:150px; top:200px">
+	<img src="dolphine.jpg" class="drag" style="width:200px;left:450px; top:100px">
+</div>
+<button id="screenshot">SCREENSHOT</button>
+<div id="monitor"></div>
+
+	<script src="https://github.com/niklasvh/html2canvas/releases/download/0.5.0-alpha1/html2canvas.js"></script>
+
+	<script type="text/javascript">
+
+	//드래그앤드롭 소스
+	//아래 코드를 삽입하면 drag 클래스가 적용된 객체들은 드래그가 가능합니다.
+	(function(){
+		var d = false;
+		var target,dx,dy;
+		var t = document.getElementsByClassName("drag");
+		for(var i=0; i<t.length; i++){
+			t[i].style.display = "block";
+			t[i].style.position = "absolute";
+			t[i].style.cursor = "pointer";
+			t[i].ondragstart = (e)=>{e.preventDefault();};
+			t[i].onmousedown = (e)=>{ d = true; dx = e.offsetX; dy = e.offsetY; target = e.target;}
+			t[i].onmouseup = () => d = false;
+			window.onmousemove = (e) => {
+				let localx,localy;
+				if(e.target.parentNode != document){
+					var t = e.target.parentNode;
+					var s = window.getComputedStyle(t);	
+					localx = parseInt(s.left);
+					localy = parseInt(s.top);
+				}
+
+				if(d){ target.style.left = (-localx + (e.clientX - dx)) + "px";
+					target.style.top = (-localy + (e.clientY - dy)) + "px";}
+			}
+		}
+	})();
+
+	//스크린샷 특정 버튼 클릭시 아래 함수를 실행하면 output박스에 이미지가 채워집니다.
+	//input은 스크린샷을 찍을 영역의 박스id입니다.
+	//output이 지정되어있지 않으면 바로 화면에 추가합니다.
+	function screenShot(input,output) {
+  		html2canvas(document.getElementById(input), {
+    		onrendered: function(canvas) {	
+      			if(output == null){
+      				document.body.appendChild(canvas);
+      			}else{
+      				let aa = document.getElementById(output);
+      				var s = document.createElement("img");
+      				s.style.width = "200px";
+      				s.style.height = "auto";
+      				var dataURL = canvas.toDataURL('image/png');
+      				s.src = dataURL;
+      				aa.appendChild(s);	
+      			}
+    		} 
+  		});
+	}
+
+	//스크린샷 발동을 위해 아래 함수를 실행시키면 두 가지 인자 중 앞의 "container"박스의 스크린샷을 찍어서 "monitor"박스에 이미지로 넣습니다.
+	screenshot.onclick = function() {screenShot("container","monitor");};
+	</script>
+</body>
+</html>
