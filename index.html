@@ -34,6 +34,7 @@
 
 	//드래그앤드롭 소스
 	//아래 코드를 삽입하면 drag 클래스가 적용된 객체들은 드래그가 가능합니다.
+	//간단한 코드라 빠르게 드래그하면 예러가납니다.
 	(function(){
 		var d = false;
 		var target,dx,dy;
@@ -67,15 +68,16 @@
   		html2canvas(document.getElementById(input), {
     		onrendered: function(canvas) {	
       			if(output == null){
+				//output이 없으면 도큐먼트에 추가합니다.
       				document.body.appendChild(canvas);
       			}else{
-      				let aa = document.getElementById(output);
-      				var s = document.createElement("img");
+      				let a = document.getElementById(output);
+      				let s = document.createElement("img");
+				//여기서 생성되는 썸네일의 크기를 조절할 수 있습니다.
       				s.style.width = "200px";
       				s.style.height = "auto";
-      				var dataURL = canvas.toDataURL('image/png');
-      				s.src = dataURL;
-      				aa.appendChild(s);	
+      				s.src = canvas.toDataURL('image/png');
+      				a.appendChild(s);	
       			}
     		} 
   		});
